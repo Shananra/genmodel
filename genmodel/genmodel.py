@@ -39,11 +39,7 @@ dialect = comps.scheme.split('+')[0]
 
 result = engine.execute(column_queries[dialect])
 
-output = "from django.db import models\n"
-try:
-    output += settings.FILE_HEADER
-except ValueError:
-    pass
+
 
 def is_match(items,mystr):
     result = False
@@ -99,10 +95,19 @@ def run_table(tablename):
         }[item[1]]} 
         
 
-for mytable in mytables:
-    run_table(mytable)
+def main():
+    global output
+    
+    output = "from django.db import models\n"
+    try:
+        output += settings.FILE_HEADER
+    except ValueError:
+        pass
+    for mytable in mytables:
+        run_table(mytable)
 
-if hasattr(settings,'FILE_FOOTER'):
-    output += settings.FILE_FOOTER
+    if hasattr(settings,'FILE_FOOTER'):
+        output += settings.FILE_FOOTER
 
-print(output)
+    print(output)
+
