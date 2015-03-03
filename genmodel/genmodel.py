@@ -1,7 +1,7 @@
 import sys,os,inspect,argparse,importlib,traceback,sqlalchemy,re
 from sqlalchemy.ext.declarative import declarative_base
 from colorama import Fore, Back, Style
-from query_strings import column_queries
+from genmodel.query_strings import column_queries
 from urllib.parse import urlparse
 sys.path.insert(0,os.getcwd())
 parser = argparse.ArgumentParser()
