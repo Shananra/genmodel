@@ -18,7 +18,7 @@ setup(name='genmodel',
       include_package_data=True,
       zip_safe=True,
       install_requires=[
-          # -*- Extra requirements: -*-
+          'sqlalchemy','colorama'
       ],
       entry_points={
             'console_scripts':['genmodel = genmodel.genmodel:main']  
