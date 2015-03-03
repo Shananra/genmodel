@@ -2,7 +2,6 @@ genmodel automatically generates django models by using their descriptions in a 
 
 Usage:
 
-::
     
     genmodel --settings=modelsettings > path/to/models.py
 
@@ -14,7 +13,6 @@ If no settings file is specified, genmodel will look in your current working for
 
 Example settings file:
 
-::
     
     # Only necessary if you want to use regex filters:
     import re
