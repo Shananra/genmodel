@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 sys.path.insert(0,os.getcwd())
 parser = argparse.ArgumentParser()
 parser.add_argument('--settings','-s',help="python file containing the settings. See the documentation for format and possible values.")
+parser.add_argument('--dialect','-s',help="django or sqlalchemy")
 args = parser.parse_args()
 
 
