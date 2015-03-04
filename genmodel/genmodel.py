@@ -115,7 +115,7 @@ def run_table(tablename):
             }[item[1]]}
         
 
-if __name__ == '__main__':
+def main():
     global output
     
     if settings.dialect == 'django':
@@ -136,4 +136,7 @@ if __name__ == '__main__':
         output += settings.FILE_FOOTER
 
     print(output)
+
+if __name__ == '__main__':
+    main()
 
