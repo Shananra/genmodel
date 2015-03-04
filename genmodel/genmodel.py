@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 sys.path.insert(0,os.getcwd())
 parser = argparse.ArgumentParser()
 parser.add_argument('--settings','-s',help="python file containing the settings. See the documentation for format and possible values.")
-parser.add_argument('--dialect','-s',help="django or sqlalchemy")
+parser.add_argument('--dialect',help="django or sqlalchemy")
 args = parser.parse_args()
 
 
@@ -99,11 +99,11 @@ def run_table(tablename):
             }[item[1]]}
         elif settings.dialect == 'sqlalchemy':
             output += "    %(fieldname)s =  %(fvalue)s\n" % {'fieldname':item[0],'fvalue':{
-                'varchar':"String(max_length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
-                'nvarchar':"Unicode(max_length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
+                'varchar':"String(length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
+                'nvarchar':"Unicode(length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
                 'int':"Integer(blank=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
-                'decimal':"DECIMAL(max_digits=%(length)s,nullable=True%(pkey)s)" % {'length':int(item[2]) + 4,'pkey':pkey},
-                'money':"Numeric(max_digits=%(length)s,nullable=True%(pkey)s)" % {'length':int(item[2])+2,'pkey':pkey},
+                'decimal':"DECIMAL(nullable=True%(pkey)s)" % {'length':int(item[2]) + 4,'pkey':pkey},
+                'money':"Numeric(nullable=True%(pkey)s)" % {'length':int(item[2])+2,'pkey':pkey},
                 'bit':'Boolean(nullable=True)',
                 'smallint':'Integer(nullable=True)',
                 'tinyint':'Integer(nullable=True)',
