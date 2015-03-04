@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys,os,inspect,argparse,importlib,traceback,sqlalchemy,re
 from sqlalchemy.ext.declarative import declarative_base
 from colorama import Fore, Back, Style
@@ -113,7 +115,7 @@ def run_table(tablename):
             }[item[1]]}
         
 
-def main():
+if __name__ == '__main__':
     global output
     
     if settings.dialect == 'django':
