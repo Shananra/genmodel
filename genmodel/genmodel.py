@@ -3,7 +3,8 @@
 import sys,os,inspect,argparse,importlib,traceback,sqlalchemy,re
 from sqlalchemy.ext.declarative import declarative_base
 from colorama import Fore, Back, Style
-from genmodel.query_strings import column_queries
+#from genmodel.query_strings import column_queries
+from query_strings import column_queries
 from urllib.parse import urlparse
 sys.path.insert(0,os.getcwd())
 parser = argparse.ArgumentParser()
@@ -45,6 +46,10 @@ dialect = comps.scheme.split('+')[0]
 result = engine.execute(column_queries[dialect])
 
 
+def un_camel(name):
+    s = re.sub('(?!_)(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s).lower()
+    
 
 def is_match(items,mystr):
     result = False
@@ -84,9 +89,9 @@ def run_table(tablename):
         pkey = ''
         if 'primary_key' in mytables[tablename]:
             if item[0] == mytables[tablename]['primary_key']:
-                pkey=',primary_key=True'
+                pkey=', primary_key=True'
         if settings.dialect == 'django':
-            output += "    %(fieldname)s =  %(fvalue)s\n" % {'fieldname':item[0],'fvalue':{
+            output += "    %(fieldname)s = %(fvalue)s\n" % {'fieldname':item[0],'fvalue':{
                 'varchar':"models.CharField(max_length=%(length)s,blank=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
                 'nvarchar':"models.CharField(max_length=%(length)s,blank=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
                 'int':"models.IntegerField(blank=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
@@ -100,22 +105,22 @@ def run_table(tablename):
                 'nchar':"models.CharField(max_length=%(length)s,blank=True%(pkey)s)" % {'length':item[2],'pkey':pkey}
             }[item[1]]}
         elif settings.dialect == 'sqlalchemy':
-            output += "    %(fieldname)s =  %(fvalue)s\n" % {'fieldname':item[0],'fvalue':{
-                'varchar':"String(length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
-                'nvarchar':"Unicode(length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
-                'int':"Integer(blank=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
-                'decimal':"DECIMAL(nullable=True%(pkey)s)" % {'length':int(item[2]) + 4,'pkey':pkey},
-                'money':"Numeric(nullable=True%(pkey)s)" % {'length':int(item[2])+2,'pkey':pkey},
-                'bit':'Boolean(nullable=True)',
-                'smallint':'Integer(nullable=True)',
-                'tinyint':'Integer(nullable=True)',
-                'datetime':'DateTime(nullable=True)',
-                'char':"CHAR(length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey},
-                'nchar':"Unicode(length=%(length)s,nullable=True%(pkey)s)" % {'length':item[2],'pkey':pkey}
+            output += "    %(fieldname)s = %(fvalue)s\n" % {'fieldname':un_camel(item[0]),'fvalue':{
+                'varchar':"Column('%(column)s', String(%(length)s), nullable=True%(pkey)s)" % {'column':item[0],'length':item[2],'pkey':pkey},
+                'nvarchar':"Column('%(column)s', Unicode(%(length)s), nullable=True%(pkey)s)" % {'column':item[0],'length':item[2],'pkey':pkey},
+                'int':"Column('%(column)s', Integer)" % {'column':item[0],'length':item[2],'pkey':pkey},
+                'decimal':"Column('%(column)s', DECIMAL, nullable=True%(pkey)s)" % {'column':item[0],'length':int(item[2]) + 4,'pkey':pkey},
+                'money':"Column('%(column)s', Numeric, nullable=True%(pkey)s)" % {'column':item[0],'length':int(item[2])+2,'pkey':pkey},
+                'bit':"Column('%(column)s', Boolean, nullable=True)" % {'column':item[0]},
+                'smallint':"Column('%(column)s', Integer, nullable=True)" % {'column':item[0]},
+                'tinyint':"Column('%(column)s', Integer, nullable=True)" % {'column':item[0]},
+                'datetime':"Column('%(column)s', DateTime, nullable=True)" % {'column':item[0]},
+                'char':"Column('%(column)s', CHAR(length=%(length)s), nullable=True%(pkey)s)" % {'column': item[0],'length':item[2],'pkey':pkey},
+                'nchar':"Column('%(column)s', Unicode(length=%(length)s), nullable=True%(pkey)s)" % {'column': item[0],'length':item[2],'pkey':pkey}
             }[item[1]]}
         
 
-if __name__ == '__main__':
+def main():
     global output
     
     if settings.dialect == 'django':
@@ -136,4 +141,7 @@ if __name__ == '__main__':
         output += settings.FILE_FOOTER
 
     print(output)
+
+if __name__ == '__main__':
+    main()
 
